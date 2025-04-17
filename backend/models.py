@@ -25,3 +25,20 @@ class Author(models.Model):
 
     class Meta:
         db_table = "author"
+
+class Book(models.Model):
+    id = models.BigAutoField(primary_key=True)
+
+    title = models.CharField(max_length=255)
+
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
+    publication_date = models.DateField()
+
+    copies_owned = models.IntegerField()
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        db_table = "book"
