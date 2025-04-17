@@ -37,8 +37,21 @@ class Book(models.Model):
 
     copies_owned = models.IntegerField()
 
+    authors = models.ManyToManyField('Author', through='BookAuthor')
+
     def __str__(self):
         return self.title
 
     class Meta:
         db_table = "book"
+
+class BookAuthor(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'book_author'
+        unique_together = ('book', 'author')  # prevents duplicate author entries for a book
+
+    def __str__(self):
+        return f"{self.author} - {self.book}"
