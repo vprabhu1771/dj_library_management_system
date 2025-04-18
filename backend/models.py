@@ -148,3 +148,24 @@ class FinePayment(models.Model):
 
     def __str__(self):
         return f"{self.member.email} - ₹{self.payment_amount} on {self.payment_date}"
+
+
+
+class ReservationStatus(models.TextChoices):
+    PENDING = 'P', _('Pending')
+    APPROVED = 'A', _('Approved')
+    REJECTED = 'R', _('Rejected')
+    CANCELLED = 'CANCELLED', _('Cancelled')
+
+class Reservation(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    member = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    reservation_date = models.DateField()
+    reservation_status =  models.CharField(
+        max_length=1,
+        choices=ReservationStatus.choices,
+        default=ReservationStatus.PENDING
+    )
+
+    def __str__(self):
+        return f"{self.member.email} - {self.book.title} ({self.reservation_status})"
