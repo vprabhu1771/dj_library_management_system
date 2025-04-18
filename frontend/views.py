@@ -1,7 +1,9 @@
+from datetime import date
+
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseBadRequest
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
 from backend.models import Loan, Fine, Reservation, Book, FinePayment
@@ -169,3 +171,14 @@ def payment_success(request):
 def reservations_view(request):
     reservations = Reservation.objects.filter(member=request.user)
     return render(request, 'frontend/reservations.html', {'reservations': reservations})
+
+# Book Reservation
+@login_required
+def reserve_book(request, book_id):
+    book = get_object_or_404(Book, id=book_id)
+    Reservation.objects.create(
+        book=book,
+        member=request.user,
+        reservation_date=date.today(),
+    )
+    return redirect('reservations')
