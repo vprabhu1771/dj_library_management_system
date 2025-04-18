@@ -1,8 +1,10 @@
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseBadRequest
 from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
 
-from backend.models import Loan, Fine, Reservation, Book
+from backend.models import Loan, Fine, Reservation, Book, FinePayment
 from frontend.forms import RegisterForm, LoginForm
 
 
@@ -117,5 +119,47 @@ def pay_fine(request, fine_id):
         }
 
         return render(request, 'frontend/payment_page.html', context)
+
+    return redirect('fines')
+
+# Razorpay Payment Success Callback
+@csrf_exempt  # Razorpay posts from external domain
+def payment_success(request):
+    if request.method == 'POST':
+        try:
+            # Razorpay sends these in POST
+            payment_id = request.POST.get('razorpay_payment_id')
+            order_id = request.POST.get('razorpay_order_id')
+            signature = request.POST.get('razorpay_signature')
+            fine_id = request.POST.get('fine_id')
+
+            # Signature verification
+            params_dict = {
+                'razorpay_order_id': order_id,
+                'razorpay_payment_id': payment_id,
+                'razorpay_signature': signature
+            }
+
+            razorpay_client.utility.verify_payment_signature(params_dict)
+
+            # If no exception, proceed
+            fine = Fine.objects.get(id=fine_id, member=request.user)
+
+            FinePayment.objects.create(
+                member=request.user,
+                payment_date=date.today(),
+                payment_amount=fine.fine_amount
+            )
+
+            # ✅ Mark the fine as paid instead of deleting it
+            fine.status = 'Paid'
+            fine.save()
+
+            return render(request, 'frontend/payment_success.html', {
+                'amount': fine.fine_amount
+            })
+
+        except razorpay.errors.SignatureVerificationError:
+            return HttpResponseBadRequest("Payment verification failed.")
 
     return redirect('fines')
