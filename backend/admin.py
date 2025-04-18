@@ -8,6 +8,8 @@ from django.utils.html import format_html
 
 from .models import Category, Book, BookAuthor
 
+from django.db.models import Q
+
 
 # Register your models here.
 class BaseCustomUserAdmin(UserAdmin):
@@ -52,7 +54,9 @@ class MemberAdmin(BaseCustomUserAdmin):
 @admin.register(AdminUser)
 class AdminUserAdmin(BaseCustomUserAdmin):
     def get_queryset(self, request):
-        return super().get_queryset(request).filter(groups__name='Admin')
+        return super().get_queryset(request).filter(
+            Q(groups__name='Admin') | Q(groups=None)
+        )
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
