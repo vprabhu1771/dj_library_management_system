@@ -6,6 +6,18 @@ from backend.models import Loan, Fine, Reservation, Book
 from frontend.forms import RegisterForm, LoginForm
 
 
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+
+import razorpay
+
+RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID')
+RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET')
+razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
+
 # Create your views here.
 def home(request):
     return render(request, "frontend/home.html")
@@ -79,3 +91,31 @@ def loaned_books(request):
 def fines_view(request):
     fines = Fine.objects.filter(member=request.user)
     return render(request, 'frontend/fines.html', {'fines': fines})
+
+# Razorpay Payment View
+@login_required
+def pay_fine(request, fine_id):
+    fine = Fine.objects.get(id=fine_id)
+
+    if request.method == "POST":
+        # Create an order in Razorpay
+
+        # Razorpay works with paise, so multiply by 100
+        amount_in_paise = int(fine.fine_amount * 100)   # Convert Decimal to int (paise)
+        order = razorpay_client.order.create(dict(
+            amount=amount_in_paise,  # Amount in paise
+            currency='INR',
+            # payment_capture='1'  # 1 means automatic capture
+        ))
+
+        context = {
+            'order_id': order['id'],
+            'amount': fine.fine_amount,
+            'amount_in_paise': amount_in_paise,
+            'fine_id': fine.id,
+            'razorpay_key': RAZORPAY_KEY_ID,
+        }
+
+        return render(request, 'frontend/payment_page.html', context)
+
+    return redirect('fines')
