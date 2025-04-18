@@ -131,11 +131,21 @@ class Loan(models.Model):
     class Meta:
         db_table = 'loan'
 
+class FineStatus(models.TextChoices):
+    PENDING = 'Pending', _('Pending')
+    APPROVED = 'Paid', _('Paid')
+
+
 class Fine(models.Model):
     member = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     loan = models.ForeignKey(Loan, on_delete=models.CASCADE)
     fine_date = models.DateField()
     fine_amount = models.DecimalField(max_digits=8, decimal_places=2)
+    status = models.CharField(
+        max_length=255,
+        choices=FineStatus.choices,
+        default=FineStatus.PENDING
+    )
 
     def __str__(self):
         return f"{self.member.email} - ₹{self.fine_amount} on {self.fine_date}"
