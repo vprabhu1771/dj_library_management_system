@@ -2,7 +2,7 @@ from datetime import date
 
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
@@ -125,46 +125,63 @@ def pay_fine(request, fine_id):
     return redirect('fines')
 
 # Razorpay Payment Success Callback
-@csrf_exempt  # Razorpay posts from external domain
+# Razorpay posts from external domain
+@csrf_exempt
+@login_required
 def payment_success(request):
     if request.method == 'POST':
         try:
-            # Razorpay sends these in POST
             payment_id = request.POST.get('razorpay_payment_id')
             order_id = request.POST.get('razorpay_order_id')
             signature = request.POST.get('razorpay_signature')
             fine_id = request.POST.get('fine_id')
 
-            # Signature verification
             params_dict = {
                 'razorpay_order_id': order_id,
                 'razorpay_payment_id': payment_id,
                 'razorpay_signature': signature
             }
 
+            # ✅ VERIFY SIGNATURE HERE
             razorpay_client.utility.verify_payment_signature(params_dict)
 
-            # If no exception, proceed
+            # ✅ Get fine object
             fine = Fine.objects.get(id=fine_id, member=request.user)
 
+            # ✅ Create payment entry
             FinePayment.objects.create(
                 member=request.user,
                 payment_date=date.today(),
                 payment_amount=fine.fine_amount
             )
 
-            # ✅ Mark the fine as paid instead of deleting it
+            # ✅ Update fine status
             fine.status = 'Paid'
             fine.save()
 
-            return render(request, 'frontend/payment_success.html', {
-                'amount': fine.fine_amount
+            return JsonResponse({
+                'success': True,
+                'amount': str(fine.fine_amount),
+                'redirect_url': f"/fines/payment-success/?amount={fine.fine_amount}"
             })
 
         except razorpay.errors.SignatureVerificationError:
-            return HttpResponseBadRequest("Payment verification failed.")
+            return JsonResponse({'success': False, 'error': 'Invalid signature'}, status=400)
 
-    return redirect('fines')
+        except Fine.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Fine not found'}, status=404)
+
+        # Handle GET request (for when redirected)
+    elif request.method == 'GET':
+
+        amount = request.GET.get('amount')
+
+        if amount:
+            return render(request, 'frontend/payment_success.html', {'amount': amount})
+        else:
+            return JsonResponse({'success': False, 'error': 'Amount not found'}, status=400)
+
+    return JsonResponse({'success': False, 'error': 'Invalid method'}, status=405)
 
 # View Reservations
 @login_required

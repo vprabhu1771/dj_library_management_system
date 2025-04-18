@@ -20,12 +20,6 @@ Payment for Fine
       description: "Fine Payment",
       order_id: "{{ order_id|escapejs }}",
       handler: function (response) {
-        <!--        alert("Payment successful. Razorpay Payment ID: " + response.razorpay_payment_id);-->
-
-        // Optionally, send payment success to the backend using AJAX
-
-        // redirect after payment
-        // Send POST data to verify payment on the server
         fetch("/fines/payment-success/", {
           method: "POST",
           headers: {
@@ -38,14 +32,17 @@ Payment for Fine
             razorpay_signature: response.razorpay_signature,
             fine_id: "{{ fine_id }}"
           })
-        }).then(res => {
-          if (res.ok) {
-            window.location.href = "/fines/payment-success/";
-          } else {
-            alert("Payment verification failed.");
-          }
-        });
+        }).then(res => res.json())
+          .then(data => {
 
+<!--            alert(JSON.stringify(data));-->
+            if (data.success) {
+              window.location.href = data.redirect_url;
+            } else {
+
+              console.log("Payment verification failed: " + (data.error || "Unknown error"));
+            }
+          });
       },
       prefill: {
         name: "{{ request.user.get_full_name|default:'Test User' }}",

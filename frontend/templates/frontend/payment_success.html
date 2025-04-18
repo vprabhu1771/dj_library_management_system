@@ -1,14 +1,10 @@
 {% extends 'frontend/layout/app.html' %}
 
 {% block title %}
-
 Dashboard
-
 {% endblock %}
 
-
 {% block content %}
-
 <div class="container mt-5 text-center">
     <div class="card shadow p-4">
         <div class="card-body">
@@ -16,7 +12,7 @@ Dashboard
                 <i class="bi bi-check-circle-fill"></i> Payment Successful!
             </h2>
             <p class="mt-3">Thank you for your payment.</p>
-            <p><strong>Amount Paid:</strong> ₹{{ amount }}</p>
+            <p><strong>Amount Paid:</strong> ₹{{ request.GET.amount }}</p>
 
             <a href="{% url 'fines' %}" class="btn btn-outline-primary mt-4">
                 Back to Fines
@@ -24,5 +20,4 @@ Dashboard
         </div>
     </div>
 </div>
-
 {% endblock %}
