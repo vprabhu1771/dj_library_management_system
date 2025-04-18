@@ -1,7 +1,7 @@
 from django.urls import path
 
 from frontend.views import home, member_register, member_login, member_logout, member_dashboard, books_list, \
-    loaned_books, fines_view, pay_fine, payment_success
+    loaned_books, fines_view, pay_fine, payment_success, reservations_view
 
 urlpatterns = [
     path('', home),
@@ -23,4 +23,6 @@ urlpatterns = [
     path('fines/pay/<int:fine_id>/', pay_fine, name='pay_fine'),
 
     path('fines/payment-success/', payment_success, name='payment_success'),
+
+    path('reservations/', reservations_view, name='reservations'),
 ]

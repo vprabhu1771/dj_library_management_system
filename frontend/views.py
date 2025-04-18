@@ -163,3 +163,9 @@ def payment_success(request):
             return HttpResponseBadRequest("Payment verification failed.")
 
     return redirect('fines')
+
+# View Reservations
+@login_required
+def reservations_view(request):
+    reservations = Reservation.objects.filter(member=request.user)
+    return render(request, 'frontend/reservations.html', {'reservations': reservations})
