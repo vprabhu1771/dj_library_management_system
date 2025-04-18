@@ -1,0 +1,54 @@
+{% extends 'frontend/layout/app.html' %}
+
+{% block title %}
+
+Dashboard
+
+{% endblock %}
+
+
+{% block content %}
+
+<!-- templates/fine_list.html -->
+<div class="container mt-5">
+  <h2>Your Fines</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Loan Book</th>
+        <th>Fine Date</th>
+        <th>Fine Amount</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in fines %}
+      <tr>
+        <td>{{ row.loan.book.title }}</td>
+        <td>{{ row.fine_date }}</td>
+        <td>₹{{ row.fine_amount }}</td>
+        <td>{{ row.status }}</td>
+        {% if row.status == 'Pending' %}
+        <td>
+          <form action="{% url 'pay_fine' row.id %}" method="POST">
+            {% csrf_token %}
+            <button class="btn btn-sm btn-danger">Pay</button>
+          </form>
+        </td>
+        {% else %}
+        <td>
+          -
+        </td>
+        {% endif %}
+      </tr>
+      {% empty %}
+        <tr><td colspan="4">No fines due.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+
+{% endblock %}

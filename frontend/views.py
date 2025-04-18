@@ -73,3 +73,9 @@ def member_dashboard(request):
 def loaned_books(request):
     loans = Loan.objects.filter(member=request.user)
     return render(request, 'frontend/loaned_books.html', {'loans': loans})
+
+# List of Fines
+@login_required
+def fines_view(request):
+    fines = Fine.objects.filter(member=request.user)
+    return render(request, 'frontend/fines.html', {'fines': fines})
