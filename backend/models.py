@@ -55,6 +55,27 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.email
 
+class AuthorUser(CustomUser):
+    class Meta:
+        proxy = True
+        verbose_name = 'Author'
+        verbose_name_plural = 'Authors'
+
+
+class MemberUser(CustomUser):
+    class Meta:
+        proxy = True
+        verbose_name = 'Member'
+        verbose_name_plural = 'Members'
+
+
+class AdminUser(CustomUser):
+    class Meta:
+        proxy = True
+        verbose_name = 'Admin'
+        verbose_name_plural = 'Admins'
+
+
 class Category(models.Model):
     id = models.BigAutoField(primary_key=True)
 
@@ -77,7 +98,7 @@ class Book(models.Model):
 
     copies_owned = models.IntegerField()
 
-    authors = models.ManyToManyField('Author', through='BookAuthor')
+    authors = models.ManyToManyField('CustomUser', through='BookAuthor')
 
     def __str__(self):
         return self.title
@@ -87,7 +108,7 @@ class Book(models.Model):
 
 class BookAuthor(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'book_author'
