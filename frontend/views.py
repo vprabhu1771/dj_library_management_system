@@ -2,13 +2,19 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 
-from backend.models import Loan, Fine, Reservation
+from backend.models import Loan, Fine, Reservation, Book
 from frontend.forms import RegisterForm, LoginForm
 
 
 # Create your views here.
 def home(request):
     return render(request, "frontend/home.html")
+
+def books_list(request):
+    context = {
+        'books': Book.objects.all()
+    }
+    return render(request, "frontend/books.html", context)
 
 # Member Registration
 def member_register(request):
