@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from backend.forms import CustomUserCreationForm, CustomUserChangeForm
-from backend.models import CustomUser, AuthorUser, MemberUser, AdminUser, Loan
+from backend.models import CustomUser, AuthorUser, MemberUser, AdminUser, Loan, Fine
 from django.utils.html import format_html
 
 from .models import Category, Book, BookAuthor
@@ -95,6 +95,18 @@ class LoanInline(admin.TabularInline):
 class LoanAdmin(admin.ModelAdmin):
     list_display = ('book', 'member', 'loan_date', 'returned_date')
     list_filter = ('loan_date', 'returned_date', 'book')
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "member":
+            kwargs["queryset"] = get_member_queryset()
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+
+# ---------- Fine Admin ----------
+@admin.register(Fine)
+class FineAdmin(admin.ModelAdmin):
+    list_display = ('member', 'loan', 'fine_date', 'fine_amount')
+    list_filter = ('fine_date',)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "member":
