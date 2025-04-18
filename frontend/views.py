@@ -67,3 +67,9 @@ def member_dashboard(request):
     }
 
     return render(request, 'frontend/dashboard.html', context)
+
+# List of Loaned Books
+@login_required
+def loaned_books(request):
+    loans = Loan.objects.filter(member=request.user)
+    return render(request, 'frontend/loaned_books.html', {'loans': loans})
