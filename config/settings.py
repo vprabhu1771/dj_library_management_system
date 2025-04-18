@@ -147,3 +147,7 @@ REST_FRAMEWORK = {
 
     )
 }
+
+
+#For To Enable Popus in Django or else it will block the payment popup
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"
