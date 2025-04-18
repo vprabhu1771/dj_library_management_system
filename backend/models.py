@@ -162,7 +162,7 @@ class Reservation(models.Model):
     member = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     reservation_date = models.DateField()
     reservation_status =  models.CharField(
-        max_length=1,
+        max_length=255,
         choices=ReservationStatus.choices,
         default=ReservationStatus.PENDING
     )
