@@ -100,6 +100,8 @@ class Book(models.Model):
 
     authors = models.ManyToManyField('CustomUser', through='BookAuthor')
 
+    cover_image = models.ImageField(upload_to='cover_image', blank=True, null=True, default='no_image_available.jpg')
+
     def __str__(self):
         return self.title
 
