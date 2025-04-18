@@ -6,7 +6,7 @@ from backend.forms import CustomUserCreationForm, CustomUserChangeForm
 from backend.models import CustomUser
 from django.utils.html import format_html
 
-from .models import Category, Author, Book, BookAuthor
+from .models import Category, Book, BookAuthor
 
 
 # Register your models here.
@@ -46,10 +46,6 @@ class CustomUserAdmin(UserAdmin):
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     search_fields = ('name',)
-
-@admin.register(Author)
-class AuthorAdmin(admin.ModelAdmin):
-    search_fields = ('first_name', 'last_name',)
 
 
 class BookAuthorInline(admin.TabularInline):
