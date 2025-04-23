@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'unfold',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -151,3 +153,10 @@ REST_FRAMEWORK = {
 
 #For To Enable Popus in Django or else it will block the payment popup
 SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"
+
+UNFOLD = {
+    "SITE_TITLE": "My Admin",
+    "SITE_HEADER": "Dashboard",
+    "SHOW_COUNTS": True,
+    # "ENVIRONMENT": "development",
+}
