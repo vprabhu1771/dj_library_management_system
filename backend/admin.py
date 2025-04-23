@@ -21,15 +21,20 @@ class BaseCustomUserAdmin(UserAdmin):
     ordering = ('email',)
 
     fieldsets = (
-        (None, {'fields': ('first_name', 'last_name', 'email', 'gender', 'password', 'groups')}),
-        ('Permissions', {'fields': ('is_staff', 'is_active')}),
+        # (None, {'fields': ('first_name', 'last_name', 'email', 'gender', 'password', 'groups')}),
+        ('Basic Information', {'fields': ('first_name', 'last_name', 'gender','password')}),
+        ('Contact Information', {'fields': ('email',)}),
+        ('Permissions', {'fields': ('groups', 'is_staff', 'is_active')}),
     )
 
     add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('first_name', 'last_name', 'email', 'gender', 'password1', 'password2', 'is_staff', 'is_active', 'groups')}
-         ),
+        # (None, {
+        #     'classes': ('wide',),
+        #     'fields': ('first_name', 'last_name', 'email', 'gender', 'password1', 'password2', 'is_staff', 'is_active', 'groups')}
+        #  ),
+        ('Basic Information', {'fields': ('first_name', 'last_name', 'gender','password1','password2')}),
+        ('Contact Information', {'fields': ('email',)}),
+        ('Permissions', {'fields': ('groups', 'is_staff', 'is_active')}),
     )
 
     def image_tag(self, obj):
