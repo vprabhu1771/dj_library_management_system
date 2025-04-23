@@ -1,0 +1,32 @@
+{% extends "unfold/layouts/base.html" %}
+
+{% block content %}
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+    <div class="rounded-lg bg-pink-600 shadow-md p-6 border-2 border-white">
+        <h2 class="text-xl font-semibold mb-2">{{ admins_count }}</h2>
+        <p class="text-4xl text-blue-600 font-bold">Total Admins</p>
+    </div>
+
+    <div class="rounded-lg bg-pink-600 shadow-md p-6 border-2 border-white">
+        <h2 class="text-xl font-semibold mb-2">{{ authors_count }}</h2>
+        <p class="text-4xl text-blue-600 font-bold">Total Authors</p>
+    </div>
+
+    <div class="rounded-lg bg-pink-600 shadow-md p-6 border-2 border-white">
+        <h2 class="text-xl font-semibold mb-2">{{ members_count }}</h2>
+        <p class="text-4xl text-blue-600 font-bold">Total Members</p>
+    </div>
+
+    <div class="rounded-lg bg-pink-600 shadow-md p-6 border-2 border-white">
+        <h2 class="text-xl font-semibold mb-2">{{ category_count }}</h2>
+        <p class="text-4xl text-blue-600 font-bold">Total Category</p>
+    </div>
+
+    <div class="rounded-lg bg-pink-600 shadow-md p-6 border-2 border-white">
+        <h2 class="text-xl font-semibold mb-2">{{ books_count }}</h2>
+        <p class="text-4xl text-blue-600 font-bold">Total Books</p>
+    </div>
+
+</div>
+{% endblock %}
