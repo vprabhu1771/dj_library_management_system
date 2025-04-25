@@ -1,16 +1,11 @@
 {% extends 'frontend/layout/app.html' %}
-
 {% load crispy_forms_tags %}
 
 {% block title %}
-
 Register
-
 {% endblock %}
 
-
 {% block content %}
-
 <div class="container mt-5">
     <h2 class="mb-4">Member Registration</h2>
     <form method="post" enctype="multipart/form-data">
@@ -19,5 +14,42 @@ Register
         <button type="submit" class="btn btn-primary mt-3">Register</button>
     </form>
 </div>
+{% endblock %}
 
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    console.log("document loaded");
+
+    $('#id_email').on('blur', function() {
+        const search_email = $(this).val();
+
+        // Dynamically insert the span if not already present
+        if ($('#availability').length === 0) {
+            $('<span id="availability" class="ms-2"></span>').insertAfter($(this));
+        }
+
+        if (search_email !== '') {
+            $.ajax({
+                url: "/ajax/email_check",
+                method: "POST",
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                data: { search_email: search_email },
+                dataType: "text",
+                success: function(data) {
+                    $('#availability').html(data);
+                },
+                error: function() {
+                    $('#availability').html('<span class="text-danger">Error checking email</span>');
+                }
+            });
+        } else {
+            $('#availability').html('');
+        }
+    });
+});
+</script>
 {% endblock %}

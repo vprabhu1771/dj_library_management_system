@@ -3,11 +3,11 @@ from datetime import date
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
-from backend.models import Loan, Fine, Reservation, Book, FinePayment
+from backend.models import Loan, Fine, Reservation, Book, FinePayment, CustomUser
 from frontend.forms import RegisterForm, LoginForm
 
 
@@ -200,3 +200,16 @@ def reserve_book(request, book_id):
         reservation_date=date.today(),
     )
     return redirect('reservations')
+
+def email_check(request):
+
+    if request.method == 'POST' and request.POST.get('search_email') != '':
+        email_response = CustomUser.objects.filter(email__icontains=request.POST.get('search_email'))
+        if email_response:
+            errno_template = "<span style='color: red;'>{} already exists</span>".format(request.POST.get('search_email'))
+
+            return HttpResponse(errno_template)
+
+        else:
+            success_template = "<span style='color: green;'>{} available</span>".format(request.POST.get('search_email'))
+            return HttpResponse(success_template)

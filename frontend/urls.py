@@ -1,7 +1,7 @@
 from django.urls import path
 
 from frontend.views import home, member_register, member_login, member_logout, member_dashboard, books_list, \
-    loaned_books, fines_view, pay_fine, payment_success, reservations_view, reserve_book
+    loaned_books, fines_view, pay_fine, payment_success, reservations_view, reserve_book, email_check
 
 urlpatterns = [
     path('', home),
@@ -27,4 +27,6 @@ urlpatterns = [
     path('reservations/', reservations_view, name='reservations'),
 
     path('reserve/<int:book_id>/', reserve_book, name='reserve_book'),
+
+    path('ajax/email_check', email_check, name='email_check')
 ]
